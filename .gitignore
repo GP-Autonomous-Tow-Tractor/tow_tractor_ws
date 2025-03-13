@@ -1,0 +1,11 @@
+# colcon build files
+log/
+install/
+build/
+
+# vs code files
+.vscode/
+*/.vscode/
+
+# compiled python files
+
