@@ -12,7 +12,6 @@ def generate_launch_description():
     ############# GZ-ROS-LAUNCH INITIAL SETUP #############
     package_name = 'tow_tractor_description'
     package_share_path = os.path.join(get_package_share_directory(package_name))
-    set_gz_sim_resource_path = SetEnvironmentVariable('GZ_SIM_RESOURCE_PATH',package_share_path)
 
 
     ############################## Robot URDF Proccessing Unit ##############################
