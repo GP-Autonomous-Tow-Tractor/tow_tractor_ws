@@ -17,7 +17,7 @@ setup(
         (os.path.join('share', package_name, 'launch'),  glob('launch/*')),
         (os.path.join('share', package_name, 'meshes'),  glob('meshes/*')),
         (os.path.join('share', package_name, 'urdf', 'stupid_robot'),  glob('urdf/stupid_robot/*')),
-
+        (os.path.join('share', package_name, 'urdf', 'tow_tractor_v1'),  glob('urdf/tow_tractor_v1/*')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,

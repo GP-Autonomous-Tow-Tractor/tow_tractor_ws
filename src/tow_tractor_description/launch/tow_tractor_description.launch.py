@@ -13,14 +13,15 @@ def generate_launch_description():
     package_name = 'tow_tractor_description'
     package_share_path = os.path.join(get_package_share_directory(package_name))
 
+    robot_name = "tow_tractor_v1" # change this to choose the robot you would like to be launched
 
     ############################## Robot URDF Proccessing Unit ##############################
     #########################################################################################
 
     ############# ROBOT STATE PUBLISHER NODE #############
     # Path to URDF file
-    urdf_file_name = 'stupid_robot.urdf.xacro'
-    xacro_file = os.path.join(package_share_path,"urdf", "stupid_robot", urdf_file_name)
+
+    xacro_file = os.path.join(package_share_path,"urdf", robot_name, f'{robot_name}.urdf.xacro')
     robot_description_config = xacro.process_file(xacro_file)
     # Create a robot_state_publisher node
     params=[
@@ -64,7 +65,6 @@ def generate_launch_description():
     return LaunchDescription([
 
         ################ PACKAGE SETUP ACTIONS ################
-        set_gz_sim_resource_path,
         declare_rviz,
 
         ############# LAUNCH NODES AND LAUNCH FILES #############

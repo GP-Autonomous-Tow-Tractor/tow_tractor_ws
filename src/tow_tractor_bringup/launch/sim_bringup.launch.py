@@ -10,6 +10,7 @@ from launch.conditions import IfCondition
 
 def generate_launch_description():
 
+    robot_name = "tow_tractor_v1"
 
     ############################### GAZEBO-ROS CUMMUNICATION  ###############################     
     #########################################################################################
@@ -76,7 +77,7 @@ def generate_launch_description():
         executable='create',
         arguments=[
             '-topic', 'robot_description',
-            '-name', 'stupid_robot',
+            '-name', robot_name,
             '-x', '9.34', '-y', '1.33', '-z', '0.1'
         ],
         output='screen'
@@ -92,7 +93,6 @@ def generate_launch_description():
 
     ############# ROBOT STATE PUBLISHER NODE #############
     # Path to URDF file
-    robot_name = "stupid_robot"
     xacro_file = os.path.join(pkg_project_description,"urdf", robot_name, f'{robot_name}.urdf.xacro')
     robot_description_config = xacro.process_file(xacro_file)
     # Create a robot_state_publisher node
