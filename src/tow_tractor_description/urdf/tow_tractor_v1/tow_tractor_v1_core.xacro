@@ -7,6 +7,7 @@
 
     <!-- CHASSIS PROPERTIES -->
     <xacro:property name="chassis_width" value="0.3" />
+    <xacro:property name="chassis_length" value="0.5" />
     <xacro:property name="chassis_hight" value="0.15" />
     <xacro:property name="chassis_shift" value="0.1" />
     <xacro:property name="chassis_mass" value="0.5" />
@@ -20,7 +21,7 @@
     <!-- STEERING LIMITS PROPERTIES -->
     <xacro:property name="steering_max_angle" value="0.52"/>        <!--rad-->
     <xacro:property name="steering_max_speed" value="1.0"/>         <!--rad/s-->
-    <xacro:property name="steering_max_torque" value="10.0"/>       <!-- N.m-->
+    <xacro:property name="steering_max_torque" value="0.0"/>       <!-- N.m-->
 
 
     <!-- BASE LINK -->
@@ -31,19 +32,19 @@
     <link name="chassis_link">
         <visual>
             <geometry>
-                <box size="${chassis_width} ${chassis_width} ${chassis_hight}"/>
+                <box size="${chassis_length} ${chassis_width} ${chassis_hight}"/>
             </geometry>
             <material name="blue"/>
-            <origin xyz="${chassis_width/2} 0.0 ${chassis_hight/2}" rpy="0.0 0.0 0.0"/>
+            <origin xyz="${chassis_length/2} 0.0 ${chassis_hight/2}" rpy="0.0 0.0 0.0"/>
         </visual>
         <collision>
             <geometry>
-                <box size="${chassis_width} ${chassis_width} ${chassis_hight}"/>
+                <box size="${chassis_length} ${chassis_width} ${chassis_hight}"/>
             </geometry>
-            <origin xyz="${chassis_width/2} 0.0 ${chassis_hight/2}" rpy="0.0 0.0 0.0"/>
+            <origin xyz="${chassis_length/2} 0.0 ${chassis_hight/2}" rpy="0.0 0.0 0.0"/>
         </collision>
-        <xacro:inertial_box mass="${chassis_mass}" x="${chassis_width}" y="${chassis_width}" z="${chassis_hight}">
-            <origin xyz="${chassis_width/2} 0.0 ${chassis_hight/2}" rpy="0.0 0.0 0.0"/>
+        <xacro:inertial_box mass="${chassis_mass}" x="${chassis_length}" y="${chassis_width}" z="${chassis_hight}">
+            <origin xyz="${chassis_length/2} 0.0 ${chassis_hight/2}" rpy="0.0 0.0 0.0"/>
         </xacro:inertial_box>
     </link>
 
@@ -77,7 +78,7 @@
     <joint name="left_wheel_joint" type="continuous">
         <parent link="chassis_link"/>
         <child link="left_wheel_link"/>
-        <origin xyz="${chassis_width * 3 / 4} ${chassis_width / 2} 0.0" rpy="0 0.0 0.0"/>
+        <origin xyz="${chassis_length * 3 / 4} ${chassis_width / 2} 0.0" rpy="0 0.0 0.0"/>
         <axis xyz="0.0 1.0 0.0"/>
     </joint>
 
@@ -104,7 +105,7 @@
     <joint name="right_wheel_joint" type="continuous">
         <parent link="chassis_link"/>
         <child link="right_wheel_link"/>
-        <origin xyz="${chassis_width * 3 / 4} ${-chassis_width / 2} 0.0" rpy="0 0.0 0.0"/>
+        <origin xyz="${chassis_length * 3 / 4} ${-chassis_width / 2} 0.0" rpy="0 0.0 0.0"/>
         <axis xyz="0.0 1.0 0.0"/>
     </joint>
 
@@ -151,8 +152,16 @@
         <limit lower="${-steering_max_angle}" upper="${steering_max_angle}" effort="${steering_max_torque}" velocity="${steering_max_speed}"/>
     </joint>
 
-    <gazebo reference="rear_wheel_joint">
-        <mu1 value="0.001"/>
-        <mu2 value="0.001"/>
+    <gazebo reference="right_wheel_link">
+        <mu1 value="1.0"/>
+        <mu2 value="1.0"/>
+    </gazebo>
+    <gazebo reference="left_wheel_link">
+        <mu1 value="1.0"/>
+        <mu2 value="1.0"/>
+    </gazebo>
+    <gazebo reference="rear_wheel_link">
+        <mu1 value="1.0"/>
+        <mu2 value="1.0"/>
     </gazebo>
 </robot>
