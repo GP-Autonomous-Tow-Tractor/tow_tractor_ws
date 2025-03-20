@@ -21,7 +21,7 @@
     <!-- STEERING LIMITS PROPERTIES -->
     <xacro:property name="steering_max_angle" value="0.52"/>        <!--rad-->
     <xacro:property name="steering_max_speed" value="1.0"/>         <!--rad/s-->
-    <xacro:property name="steering_max_torque" value="0.0"/>       <!-- N.m-->
+    <xacro:property name="steering_max_torque" value="10.0"/>       <!-- N.m-->
 
 
     <!-- BASE LINK -->

@@ -3,29 +3,38 @@
 
     <gazebo>
 
-        <!-- CONTROL PLUGIN -->
-        <plugin name="gz::sim::systems::DiffDrive" filename="gz-sim-diff-drive-system">
+        <!-- CONTROL Speed PLUGIN -->
+        <plugin name="gz::sim::systems::JointController" filename="gz-sim-joint-controller-system">
             <!-- WHEEL INFORMATION -->
-            <left_joint>left_wheel_joint</left_joint>
-            <right_joint>right_wheel_joint</right_joint>
+            <joint_name>left_wheel_joint</joint_name>
+            <joint_name>right_wheel_joint</joint_name>
             <wheel_separation>${chassis_width}</wheel_separation>
-            <wheel_diameter>${wheel_rad * 2}</wheel_diameter>
+            <topic>tow_tractor_v1/cmd_vel</topic>
+        </plugin>
 
-            <!-- LIMITS -->
-            <max_linear_acceleration>2</max_linear_acceleration>
-            <min_linear_acceleration>-5</min_linear_acceleration>
-            <max_angular_acceleration>15</max_angular_acceleration>
-            <min_angular_acceleration>-15</min_angular_acceleration>
-            <max_linear_velocity>20</max_linear_velocity>
-            <max_angular_velocity>60</max_angular_velocity>
-    
-            <!-- OUTPUT -->
-            <topic>cmd_vel</topic>
+        <plugin name="gz::sim::systems::JointPositionController" filename="gz-sim-joint-position-controller-system">
+            <joint_name>steering_joint</joint_name>
+            <topic>tow_tractor_v1/cmd_pos</topic>
+            <!-- <joint_index>0</joint_index> -->
+            <p_gain>30</p_gain>
+            <i_gain>0.1</i_gain>
+            <d_gain>0.01</d_gain>
+            <i_max>1</i_max>
+            <i_min>-1</i_min>
+            <cmd_max>1000</cmd_max>
+            <cmd_min>-1000</cmd_min>
+        </plugin>
+
+        <plugin name="gz::sim::systems::OdometryPublisher" filename="gz-sim-odometry-publisher-system">
+            <odom_frame>odom</odom_frame>
+            <robot_base_frame>base_link</robot_base_frame>
+            <odom_publish_frequency>50</odom_publish_frequency>
             <odom_topic>odom</odom_topic>
             <tf_topic>tf</tf_topic>
-
-            <frame_id>odom</frame_id>
-            <child_frame_id>base_link</child_frame_id>
+            <dimensions>2</dimensions>
+            <xyz_offset>0 0 0</xyz_offset>
+            <rpy_offset>0 0 0</rpy_offset>
+            <!-- <gaussian_noise>0.01</gaussian_noise> -->
         </plugin>
 
         <!-- JOINT STATE PUBLISHER -->

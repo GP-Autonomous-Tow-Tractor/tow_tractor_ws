@@ -60,15 +60,19 @@ Visualization Manager:
         All Enabled: true
         base_link:
           Value: true
-        caster_wheel_link:
-          Value: true
         chassis_link:
+          Value: true
+        imu_frame:
           Value: true
         left_wheel_link:
           Value: true
         lidar_frame:
           Value: true
         odom:
+          Value: true
+        rear_wheel_link:
+          Value: true
+        rear_wheel_mount_link:
           Value: true
         right_wheel_link:
           Value: true
@@ -81,14 +85,17 @@ Visualization Manager:
         odom:
           base_link:
             chassis_link:
-              caster_wheel_link:
+              imu_frame:
                 {}
-            left_wheel_link:
-              {}
+              left_wheel_link:
+                {}
+              right_wheel_link:
+                {}
             lidar_frame:
               {}
-            right_wheel_link:
-              {}
+            rear_wheel_mount_link:
+              rear_wheel_link:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -113,16 +120,15 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        caster_wheel_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         chassis_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
+        imu_frame:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         left_wheel_link:
           Alpha: 1
           Show Axes: false
@@ -133,6 +139,15 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        rear_wheel_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        rear_wheel_mount_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
         right_wheel_link:
           Alpha: 1
           Show Axes: false
@@ -183,7 +198,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: odom
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
@@ -226,7 +241,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 2.146564483642578
+      Distance: 6.569488048553467
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
