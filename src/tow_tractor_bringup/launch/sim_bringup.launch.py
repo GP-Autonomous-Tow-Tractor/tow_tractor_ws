@@ -42,7 +42,7 @@ def generate_launch_description():
     node_rviz = Node(
        package='rviz2',
        executable='rviz2',
-       arguments=['-d', os.path.join(pkg_project_bringup, 'config', 'stupid_robot.rviz')],
+       arguments=['-d', os.path.join(pkg_project_bringup, 'config', 'tow_tractor.rviz')],
        condition=IfCondition(LaunchConfiguration('rviz'))
     )
 
