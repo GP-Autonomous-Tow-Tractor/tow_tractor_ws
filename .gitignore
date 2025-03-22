@@ -3,9 +3,10 @@ log/
 install/
 build/
 
+*/log/
+*/install/
+*/build/
+
 # vs code files
 .vscode/
 */.vscode/
-
-# compiled python files
-
