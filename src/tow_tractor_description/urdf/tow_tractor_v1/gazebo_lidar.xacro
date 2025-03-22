@@ -37,7 +37,8 @@
 
 
     <gazebo reference="lidar_frame">
-        <sensor name='lidar_sensor' type='gpu_lidar'>
+        <sensor name='lidar_frame' type='gpu_lidar'>
+            <gz_frame_id>lidar_frame</gz_frame_id>
             <always_on>true</always_on>
             <visualize>true</visualize>
             <pose relative_to='lidar_frame'>0 0 0 0 0 0</pose>
