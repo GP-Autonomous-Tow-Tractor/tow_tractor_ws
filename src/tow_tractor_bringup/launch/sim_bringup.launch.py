@@ -31,9 +31,6 @@ def generate_launch_description():
         executable='parameter_bridge',
         parameters=[{
             'config_file': os.path.join(pkg_project_bringup, 'config', 'ros_gz_bridge_config.yaml'),
-            # 'qos_overrides./tf_static.publisher.durability': 'transient_local',
-            # "qos_overrides./scan.reliability": "best_effort",
-            # "qos_overrides./scan.durability": "transient_local"
         }],
         output='screen'
     )
@@ -106,6 +103,13 @@ def generate_launch_description():
         output='both',
         parameters=params,
     )
+
+    node_model_info_publisher = Node(
+        package='tow_tractor_description',
+        executable='model_info_publisher',
+        output='screen',
+        parameters=[os.path.join(pkg_project_description, 'config', f'{robot_name}.yaml')],
+    )
     #########################################################################################
     #########################################################################################
 
@@ -147,7 +151,7 @@ def generate_launch_description():
         ############# R0BOT NODES AND LAUNCH FILES #############
         node_rviz,
         node_robot_state_publisher,
-
+        node_model_info_publisher,
 
         ############# Autonomous System NODES AND LAUNCH FILES #############
         slam_toolbox_launch,

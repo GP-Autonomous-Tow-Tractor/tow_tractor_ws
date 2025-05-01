@@ -9,12 +9,12 @@
             <joint_name>left_wheel_joint</joint_name>
             <joint_name>right_wheel_joint</joint_name>
             <wheel_separation>${chassis_width}</wheel_separation>
-            <topic>tow_tractor_v1/cmd_vel</topic>
+            <topic>tow_tractor_v1/cmd_motor_speed</topic>
         </plugin>
 
         <plugin name="gz::sim::systems::JointPositionController" filename="gz-sim-joint-position-controller-system">
             <joint_name>steering_joint</joint_name>
-            <topic>tow_tractor_v1/cmd_pos</topic>
+            <topic>tow_tractor_v1/cmd_motor_pos</topic>
             <!-- <joint_index>0</joint_index> -->
             <p_gain>30</p_gain>
             <i_gain>0.1</i_gain>

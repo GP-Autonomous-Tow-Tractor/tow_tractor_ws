@@ -10,3 +10,7 @@ build/
 # vs code files
 .vscode/
 */.vscode/
+
+# pycache data
+__pycache__/
+*/__pycache__/

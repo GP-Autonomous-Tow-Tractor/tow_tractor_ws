@@ -28,6 +28,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            'model_info_publisher = tow_tractor_description.model_info_publisher_node:main',
         ],
     },
 )
