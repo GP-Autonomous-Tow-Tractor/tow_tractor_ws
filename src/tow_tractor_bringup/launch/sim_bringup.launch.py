@@ -110,6 +110,27 @@ def generate_launch_description():
     #########################################################################################
 
 
+    ########################### SLAM TOOLBOX - ONLINE ASYNC LAUNCH ##########################
+    #########################################################################################
+    slam_toolbox_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                get_package_share_directory('slam_toolbox'),
+                'launch',
+                'online_async_launch.py'
+            ])
+        ]),
+        launch_arguments={
+            'params_file': PathJoinSubstitution([
+                pkg_project_bringup,
+                'config',
+                'mapper_params_online_async.yaml'
+            ]),
+            'use_sim_time': 'true',
+        }.items()
+    )
+    #########################################################################################
+    #########################################################################################
 
 
     return LaunchDescription([
@@ -118,10 +139,16 @@ def generate_launch_description():
         set_gz_sim_resource_path,
         declare_rviz,
 
-        ############# LAUNCH NODES AND LAUNCH FILES #############
+        ############# GAZEBO NODES AND LAUNCH FILES #############
         launch_gazebo_world,
         node_ros_gz_bridge,
+        node_spawn_urdf,
+
+        ############# R0BOT NODES AND LAUNCH FILES #############
         node_rviz,
         node_robot_state_publisher,
-        node_spawn_urdf,
+
+
+        ############# Autonomous System NODES AND LAUNCH FILES #############
+        slam_toolbox_launch,
     ])
