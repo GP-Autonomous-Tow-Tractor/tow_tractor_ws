@@ -1,8 +1,14 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="tow_tractor_v1">
 
+    <xacro:arg name="use_gazebo" default="false" />
+
     <xacro:include filename="tow_tractor_v1_core.xacro" />
-    <xacro:include filename="gazebo_control.xacro" />
-    <xacro:include filename="gazebo_lidar.xacro" />
-    <xacro:include filename="gazebo_imu.xacro" />
+
+    <!-- Gazebo Plugins -->
+    <xacro:if value="$(arg use_gazebo)">
+        <xacro:include filename="gazebo_control.xacro" />
+        <xacro:include filename="gazebo_lidar.xacro" />
+        <xacro:include filename="gazebo_imu.xacro" />
+    </xacro:if>
 </robot>

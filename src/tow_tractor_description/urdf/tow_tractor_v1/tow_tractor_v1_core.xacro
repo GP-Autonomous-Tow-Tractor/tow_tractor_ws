@@ -162,16 +162,21 @@
         <limit lower="${-steering_max_angle}" upper="${steering_max_angle}" effort="${steering_max_torque}" velocity="${steering_max_speed}"/>
     </joint>
 
-    <gazebo reference="right_wheel_link">
-        <mu1 value="1.0"/>
-        <mu2 value="1.0"/>
-    </gazebo>
-    <gazebo reference="left_wheel_link">
-        <mu1 value="1.0"/>
-        <mu2 value="1.0"/>
-    </gazebo>
-    <gazebo reference="rear_wheel_link">
-        <mu1 value="1.0"/>
-        <mu2 value="1.0"/>
-    </gazebo>
+    <!-- Gazebo Friction Parameters -->
+    <!-- <xacro:arg name="use_gazebo" default="false" />
+
+    <xacro:if value="$(arg use_gazebo)">
+        <gazebo reference="right_wheel_link">
+            <mu1 value="1.0"/>
+            <mu2 value="1.0"/>
+        </gazebo>
+        <gazebo reference="left_wheel_link">
+            <mu1 value="1.0"/>
+            <mu2 value="1.0"/>
+        </gazebo>
+        <gazebo reference="rear_wheel_link">
+            <mu1 value="1.0"/>
+            <mu2 value="1.0"/>
+        </gazebo>
+    </xacro:if> -->
 </robot>

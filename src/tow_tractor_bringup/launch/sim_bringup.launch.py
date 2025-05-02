@@ -7,10 +7,18 @@ from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import IfCondition
+from launch.substitutions import Command, PythonExpression
 
 def generate_launch_description():
 
     robot_name = "tow_tractor_v1"
+    use_gazebo = 'true'                 # set to false to disable gazebo plugins
+    declare_use_gazebo_arg = DeclareLaunchArgument(
+            'use_gazebo',
+            default_value=use_gazebo,
+            description='Whether to include Gazebo plugins'
+        )
+    use_gazebo_arg = LaunchConfiguration("use_gazebo")
 
     ############################### GAZEBO-ROS CUMMUNICATION  ###############################     
     #########################################################################################
@@ -90,17 +98,28 @@ def generate_launch_description():
 
     ############# ROBOT STATE PUBLISHER NODE #############
     # Path to URDF file
-    xacro_file = os.path.join(pkg_project_description,"urdf", robot_name, f'{robot_name}.urdf.xacro')
-    robot_description_config = xacro.process_file(xacro_file)
-    # Create a robot_state_publisher node
-    params=[
-        {'use_sim_time': True},
-        {'robot_description': robot_description_config.toxml()},
-        ]
+    xacro_file = PathJoinSubstitution([
+        pkg_project_description,
+        "urdf",
+        robot_name,
+        f"{robot_name}.urdf.xacro"
+    ])
+
+    # Generate robot_description using proper substitution handling
+    robot_description_content = Command([
+            "xacro ", xacro_file,
+            " use_gazebo:=", use_gazebo_arg,
+        ])
+
+    params = [{
+            "use_sim_time": PythonExpression(["'", use_gazebo_arg, "' == 'true'"]),
+            "robot_description": robot_description_content,
+        }]
+
     node_robot_state_publisher = Node(
-        package='robot_state_publisher',
-        executable='robot_state_publisher',
-        output='both',
+        package="robot_state_publisher",
+        executable="robot_state_publisher",
+        output="both",
         parameters=params,
     )
 
@@ -130,7 +149,7 @@ def generate_launch_description():
                 'config',
                 'mapper_params_online_async.yaml'
             ]),
-            'use_sim_time': 'true',
+            'use_sim_time': use_gazebo,
         }.items()
     )
     #########################################################################################
@@ -142,6 +161,7 @@ def generate_launch_description():
         ################ PACKAGE SETUP ACTIONS ################
         set_gz_sim_resource_path,
         declare_rviz,
+        declare_use_gazebo_arg,
 
         ############# GAZEBO NODES AND LAUNCH FILES #############
         launch_gazebo_world,
