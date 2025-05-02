@@ -133,6 +133,27 @@ def generate_launch_description():
     #########################################################################################
 
 
+
+
+    ############################ REAR STEERING CONTROLLER LAUNCH ############################
+    #########################################################################################
+    node_rear_steering_controller = Node(
+        package='tow_tractor_control',
+        executable='rear_wheel_steering_controller',
+        output='screen',
+        parameters=[{
+            'cmd_vel_topic': 'cmd_vel',
+            'speed_cmd_topic': f'/{robot_name}/cmd_motor_speed',
+            'steer_cmd_topic': f'/{robot_name}/cmd_motor_pos',
+            'model_info_topic': f'/{robot_name}/info',
+        }]
+    )
+    #########################################################################################
+    #########################################################################################
+
+
+
+
     ########################### SLAM TOOLBOX - ONLINE ASYNC LAUNCH ##########################
     #########################################################################################
     slam_toolbox_launch = IncludeLaunchDescription(
@@ -156,6 +177,8 @@ def generate_launch_description():
     #########################################################################################
 
 
+
+
     return LaunchDescription([
 
         ################ PACKAGE SETUP ACTIONS ################
@@ -172,6 +195,7 @@ def generate_launch_description():
         node_rviz,
         node_robot_state_publisher,
         node_model_info_publisher,
+        node_rear_steering_controller,
 
         ############# Autonomous System NODES AND LAUNCH FILES #############
         slam_toolbox_launch,
