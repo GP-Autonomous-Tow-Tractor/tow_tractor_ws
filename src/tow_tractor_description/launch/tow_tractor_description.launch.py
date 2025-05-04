@@ -13,7 +13,7 @@ def generate_launch_description():
     package_name = 'tow_tractor_description'
     package_share_path = os.path.join(get_package_share_directory(package_name))
 
-    robot_name = "tow_tractor_v1" # change this to choose the robot you would like to be launched
+    robot_name = "tow_tractor_v2" # change this to choose the robot you would like to be launched
 
     ############################## Robot URDF Proccessing Unit ##############################
     #########################################################################################

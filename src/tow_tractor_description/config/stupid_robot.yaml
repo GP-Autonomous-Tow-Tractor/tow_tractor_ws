@@ -1,0 +1,24 @@
+# tow_tractor_description/config/stupid_robot.yaml
+
+model_info_publisher:
+  ros__parameters:
+    model_name: 'stupid_robot'
+
+    # Physical Info
+    moi:                1.23       # moment of inertia [kg·m^2]
+    mass:               0.5        # chassis_mass from Xacro [kg]
+    center_of_mass:
+      x: 0.25                    # half chassis_length [m]
+      y: 0.0                     # centered on width [m]
+      z: 0.075                   # half chassis_height [m]
+
+    # Limits
+    max_rpm:            3000.0    # wheel motor max RPM
+    max_steering_angle: 0.52      # steering_max_angle from Xacro [rad]
+
+    # Geometric Info
+    wheel_base:         0.375     # chassis_length * 3/4 for front axle [m]
+    wheel_distance:     0.3       # chassis_width from Xacro [m]
+    wheel_rad:          0.05      # wheel radius from Xacro [m]
+    vehicle_length:     0.5       # chassis_length from Xacro [m]
+    vehicle_width:      0.3       # chassis_width from Xacro [m]

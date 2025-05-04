@@ -2,25 +2,54 @@ import os
 import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import IfCondition
 from launch.substitutions import Command, PythonExpression
 
+def _setup(context, *args, **kwargs):
+    robot_name    = LaunchConfiguration('robot_name').perform(context)
+    robot_control = LaunchConfiguration('robot_control').perform(context)
+    print(f"▶ robot_name    = {robot_name}")
+    print(f"▶ robot_control = {robot_control}")
+
+    return []
+
 def generate_launch_description():
 
-    robot_name = "tow_tractor_v1"
+    robot_name = "tow_tractor_v2"                       # "tow_tractor_v1"
+    robot_control = "diff_drive"        # ['rear_steer', 'diff_drive']
     use_gazebo = 'true'                 # set to false to disable gazebo plugins
+
+    ############################# Launch Argument Declerations  #############################
+    #########################################################################################
+    declare_robot_name_arg = DeclareLaunchArgument(
+        'robot_name',
+        default_value=robot_name,
+        description='Name of the robot (tow_tractor_v1 or other)'
+    )
+    
+    declare_robot_control_arg = DeclareLaunchArgument(
+        'robot_control',
+        default_value=robot_control,
+        description='Control type (rear_steer or diff_drive)'
+    )
+
     declare_use_gazebo_arg = DeclareLaunchArgument(
             'use_gazebo',
             default_value=use_gazebo,
             description='Whether to include Gazebo plugins'
         )
     use_gazebo_arg = LaunchConfiguration("use_gazebo")
+    #########################################################################################
+    #########################################################################################
 
-    ############################### GAZEBO-ROS CUMMUNICATION  ###############################     
+
+
+
+    ############################### GAZEBO-ROS CUMMUNICATION  ###############################
     #########################################################################################
 
     ############# GZ-ROS-LAUNCH INITIAL SETUP #############
@@ -38,7 +67,7 @@ def generate_launch_description():
         package='ros_gz_bridge',
         executable='parameter_bridge',
         parameters=[{
-            'config_file': os.path.join(pkg_project_bringup, 'config', 'ros_gz_bridge_config.yaml'),
+            'config_file': os.path.join(pkg_project_bringup, 'config', f'{robot_name}_ros_gz_bridge_config.yaml'),
         }],
         output='screen'
     )
@@ -142,11 +171,11 @@ def generate_launch_description():
         executable='rear_wheel_steering_controller',
         output='screen',
         parameters=[{
-            'cmd_vel_topic': 'cmd_vel',
             'speed_cmd_topic': f'/{robot_name}/cmd_motor_speed',
             'steer_cmd_topic': f'/{robot_name}/cmd_motor_pos',
             'model_info_topic': f'/{robot_name}/info',
-        }]
+        }],
+        condition=IfCondition(PythonExpression(["'", robot_control, "' == 'rear_steer'"]))
     )
     #########################################################################################
     #########################################################################################
@@ -176,22 +205,22 @@ def generate_launch_description():
     #########################################################################################
     #########################################################################################
 
-
-
-
-    return LaunchDescription([
-
+    actions = [
         ################ PACKAGE SETUP ACTIONS ################
         set_gz_sim_resource_path,
         declare_rviz,
         declare_use_gazebo_arg,
+        declare_robot_name_arg,
+        declare_robot_control_arg,
+
+        OpaqueFunction(function=_setup),
 
         ############# GAZEBO NODES AND LAUNCH FILES #############
         launch_gazebo_world,
         node_ros_gz_bridge,
         node_spawn_urdf,
 
-        ############# R0BOT NODES AND LAUNCH FILES #############
+        ############# ROBOT NODES AND LAUNCH FILES #############
         node_rviz,
         node_robot_state_publisher,
         node_model_info_publisher,
@@ -199,4 +228,9 @@ def generate_launch_description():
 
         ############# Autonomous System NODES AND LAUNCH FILES #############
         slam_toolbox_launch,
-    ])
+    ]
+
+    # Filter out any None values
+    actions = [action for action in actions if action is not None]
+
+    return LaunchDescription(actions)

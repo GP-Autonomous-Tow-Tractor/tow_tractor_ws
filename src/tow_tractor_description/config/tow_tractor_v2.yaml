@@ -1,0 +1,24 @@
+# tow_tractor_description/config/tow_tractor_v2.yaml
+
+model_info_publisher:
+  ros__parameters:
+    model_name: 'tow_tractor_v2'
+
+    # Physical Info
+    moi:                1.23       # moment of inertia [kg·m^2] (placeholder, adjust if needed)
+    mass:               40.0         # chassis_mass from Xacro [kg]
+    center_of_mass:
+      x: 0.325                   # chassis_length / 2
+      y: 0.0                     # centered on width
+      z: 0.15                    # chassis_hight / 2
+
+    # Limits
+    max_rpm:            3000.0    # wheel motor max RPM (placeholder)
+    max_steering_angle: 3.1415      # steering_max_angle from Xacro [rad]
+
+    # Geometric Info
+    wheel_base:         0.4875     # chassis_length * 3/4 [0.65 * 0.75]
+    wheel_distance:     0.5        # chassis_width from Xacro [m]
+    wheel_rad:          0.1        # wheel radius from Xacro [m]
+    vehicle_length:     0.65       # chassis_length from Xacro [m]
+    vehicle_width:      0.5        # chassis_width from Xacro [m]

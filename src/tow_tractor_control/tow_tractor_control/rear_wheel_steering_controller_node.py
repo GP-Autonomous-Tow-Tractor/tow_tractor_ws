@@ -62,8 +62,12 @@ class RearWheelSteeringController(Node):
         self.get_logger().info(f'subscribed to {cmd_vel_topic}, publishing speed ->{speed_topic}, steer->{steer_topic}')
 
     def cmd_vel_callback(self, twist_msg: Twist):
-        v = twist_msg .linear.x
+        v = twist_msg.linear.x
         omega = -twist_msg.angular.z
+
+        # v_min = 0.5
+        # if v and abs(v) < v_min:
+        #     v = v_min if v > 0 else -v_min
 
         if self.L == 0 or self.r == 0 or self.max_wheel_speed == 0:
             self.get_logger().warn('Model parameters not initialized yet. Skipping cmd_vel...')
@@ -77,6 +81,10 @@ class RearWheelSteeringController(Node):
         sin_arg = max(min(sin_arg, 1.0), -1)
         delta = np.arcsin(sin_arg)
         delta = max(min(delta, self.max_delta), -self.max_delta)
+
+        if v < 0:
+            delta *= -1
+
         # Calculate Motor Speed
         wheel_speed = 0.0
         if self.r > 1e-6:
