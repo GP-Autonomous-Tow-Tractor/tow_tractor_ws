@@ -24,10 +24,10 @@ class SensorReceiverNode(Node):
         self.declare_parameter('channel_imu', '/dev/ttyACM0')
 
         self.declare_parameter('baudrate_encoders',115200)
-        self.declare_parameter('channel_encoders', '/dev/ttyACM1')
+        self.declare_parameter('channel_encoders', '/dev/ttyACM0')
 
         self.declare_parameter('baudrate_actuator_feedback',115200)
-        self.declare_parameter('channel_actuator_feedback', '/dev/ttyACM2')
+        self.declare_parameter('channel_actuator_feedback', '/dev/ttyACM0')
 
         baudrate_imu = self.get_parameter('baudrate_imu').value
         channel_imu = self.get_parameter('channel_imu').value
@@ -43,7 +43,7 @@ class SensorReceiverNode(Node):
 
 
         imu_msg_id = self.get_parameter('imu_msg_id').value
-        encoder_msg_id = self.get_parameter('encoder_msg_id').value
+        encoder_msg_id = self.get_parameter('encoders_msg_id').value
         actuator_feedback_msg_id = self.get_parameter('actuator_feedback_msg_id').value
 
         # Node Parameters
