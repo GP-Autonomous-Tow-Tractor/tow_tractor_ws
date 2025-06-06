@@ -29,7 +29,7 @@ setup(
     entry_points={
         'console_scripts': [
             'sensor_receiver_node = tow_tractor_hardware.sensor_receiver_node:main',
-            'actuator_sender_node = tow_tractor_hardware.actuator_sender_node:main',
+            'actuators_sender_node = tow_tractor_hardware.actuators_sender_node:main',
         ],
     },
 )
