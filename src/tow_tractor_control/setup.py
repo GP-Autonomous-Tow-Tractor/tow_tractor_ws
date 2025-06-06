@@ -21,6 +21,7 @@ setup(
     entry_points={
         'console_scripts': [
             'rear_wheel_steering_controller = tow_tractor_control.rear_wheel_steering_controller_node:main',
+            'diff_drive_controller = tow_tractor_control.diff_drive_controller_node:main',
         ],
     },
 )

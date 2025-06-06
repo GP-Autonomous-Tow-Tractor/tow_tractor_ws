@@ -145,20 +145,34 @@ def generate_launch_description():
 
 
 
-    ############################ REAR STEERING CONTROLLER LAUNCH ############################
+    ##################################### CONTROL NODES #####################################
     #########################################################################################
-    # Note it's not used right now
     node_rear_steering_controller = Node(
         package='tow_tractor_control',
         executable='rear_wheel_steering_controller',
         output='screen',
         parameters=[{
+            'cmd_vel_topic': '/cmd_vel',
+            'model_info_topic': f'/{robot_name}/info',
             'speed_cmd_topic': f'/{robot_name}/cmd_motor_speed',
             'steer_cmd_topic': f'/{robot_name}/cmd_motor_pos',
-            'model_info_topic': f'/{robot_name}/info',
         }],
         condition=IfCondition(PythonExpression(["'", robot_control, "' == 'rear_steer'"])),
     )
+
+    node_diff_driver_controller = Node(
+        package='tow_tractor_control',
+        executable='diff_drive_controller',
+        name='diff_drive_controller',
+        parameters=[
+            {'cmd_vel_topic': '/cmd_vel'},
+            {'model_info_topic': f'/{robot_name}/info'},
+            {'cmd_motor1_topic': f'/{robot_name}/cmd_motor1'}, # Right motor
+            {'cmd_motor2_topic': f'/{robot_name}/cmd_motor2'}, # Left motor
+        ],
+        output='screen',
+        condition=IfCondition(PythonExpression(["'", robot_control, "' == 'diff_drive'"])),
+        )
     #########################################################################################
     #########################################################################################
 
@@ -204,6 +218,7 @@ def generate_launch_description():
         node_robot_state_publisher,
         node_model_info_publisher,
         node_rear_steering_controller,
+        node_diff_driver_controller,
 
         ############# Autonomous System NODES AND LAUNCH FILES #############
         slam_toolbox_launch,

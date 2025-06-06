@@ -13,7 +13,7 @@ model_info_publisher:
       z: 0.15                    # chassis_hight / 2
 
     # Limits
-    max_rpm:            3000.0    # wheel motor max RPM (placeholder)
+    max_rpm:            190.0    # wheel motor max RPM (placeholder)
     max_steering_angle: 3.1415      # steering_max_angle from Xacro [rad]
 
     # Geometric Info
