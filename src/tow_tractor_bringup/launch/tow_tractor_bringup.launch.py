@@ -2,40 +2,31 @@ import os
 import xacro
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, DeclareLaunchArgument, OpaqueFunction
+from launch.actions import IncludeLaunchDescription, SetEnvironmentVariable, DeclareLaunchArgument
 from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.conditions import IfCondition
 from launch.substitutions import Command, PythonExpression
 
-def _setup(context, *args, **kwargs):
-    robot_name    = LaunchConfiguration('robot_name').perform(context)
-    robot_control = LaunchConfiguration('robot_control').perform(context)
-    print(f"▶ robot_name    = {robot_name}")
-    print(f"▶ robot_control = {robot_control}")
-
-    return []
-
 def generate_launch_description():
 
-    robot_name = "tow_tractor_v2"                       # "tow_tractor_v1"
+    robot_name = "tow_tractor_v2"
     robot_control = "diff_drive"        # ['rear_steer', 'diff_drive']
-    use_gazebo = 'true'                 # set to false to disable gazebo plugins
+    use_gazebo = 'true'
 
-    ############################# Launch Argument Declerations  #############################
+    pkg_project_bringup = os.path.join(get_package_share_directory("tow_tractor_bringup"))
+    pkg_project_description = os.path.join(get_package_share_directory("tow_tractor_description"))
+    pkg_project_gazebo = os.path.join(get_package_share_directory("tow_tractor_gazebo"))
+    pkg_project_hardware = os.path.join(get_package_share_directory("tow_tractor_hardware"))
+
+    ###################################### GAZEBO MODE ######################################
     #########################################################################################
-    declare_robot_name_arg = DeclareLaunchArgument(
-        'robot_name',
-        default_value=robot_name,
-        description='Name of the robot (tow_tractor_v1 or other)'
-    )
-    
-    declare_robot_control_arg = DeclareLaunchArgument(
-        'robot_control',
-        default_value=robot_control,
-        description='Control type (rear_steer or diff_drive)'
-    )
+
+    ############# GZ-ROS-LAUNCH INITIAL SETUP #############
+
+    gz_sim_resource_path = f"{pkg_project_bringup}:{pkg_project_gazebo}:{pkg_project_description}"
+    set_gz_sim_resource_path = SetEnvironmentVariable('GZ_SIM_RESOURCE_PATH',gz_sim_resource_path)
 
     declare_use_gazebo_arg = DeclareLaunchArgument(
             'use_gazebo',
@@ -43,23 +34,6 @@ def generate_launch_description():
             description='Whether to include Gazebo plugins'
         )
     use_gazebo_arg = LaunchConfiguration("use_gazebo")
-    #########################################################################################
-    #########################################################################################
-
-
-
-
-    ############################### GAZEBO-ROS CUMMUNICATION  ###############################
-    #########################################################################################
-
-    ############# GZ-ROS-LAUNCH INITIAL SETUP #############
-    pkg_project_bringup = os.path.join(get_package_share_directory("tow_tractor_bringup"))
-    pkg_project_gazebo = os.path.join(get_package_share_directory("tow_tractor_gazebo"))
-    pkg_project_description = os.path.join(get_package_share_directory("tow_tractor_description"))
-
-    gz_sim_resource_path = f"{pkg_project_bringup}:{pkg_project_gazebo}:{pkg_project_description}"
-    set_gz_sim_resource_path = SetEnvironmentVariable('GZ_SIM_RESOURCE_PATH',gz_sim_resource_path)
-
 
     ################## GZ-ROS-BRIDGE NODE ##################
 
@@ -69,27 +43,9 @@ def generate_launch_description():
         parameters=[{
             'config_file': os.path.join(pkg_project_bringup, 'config', f'{robot_name}_ros_gz_bridge_config.yaml'),
         }],
+        condition=IfCondition(use_gazebo_arg),
         output='screen'
     )
-
-    ##################  VISUALIZE IN RVIZ ##################
-    node_rviz = Node(
-       package='rviz2',
-       executable='rviz2',
-       arguments=['-d', os.path.join(pkg_project_bringup, 'config', 'tow_tractor.rviz')],
-       condition=IfCondition(LaunchConfiguration('rviz'))
-    )
-
-    declare_rviz = DeclareLaunchArgument('rviz', default_value='true',
-                        description='Open RViz.')
-    #########################################################################################
-    #########################################################################################
-
-
-
-
-    ################################ Launching Gazebo World  ################################     
-    #########################################################################################
 
     ############# GAZEBO SIM LAUNCH - WORLD #############
     launch_gazebo_world = IncludeLaunchDescription(
@@ -102,7 +58,8 @@ def generate_launch_description():
         ]),
         launch_arguments={
             'gz_args': [PathJoinSubstitution([pkg_project_gazebo, 'worlds/warehouse.sdf']),],
-        }.items()
+        }.items(),
+        condition=IfCondition(use_gazebo_arg),
     )
 
     ############# GAZEBO SIM LAUNCH - MODEL #############
@@ -114,8 +71,19 @@ def generate_launch_description():
             '-name', robot_name,
             '-x', '9.34', '-y', '1.33', '-z', '0.1'
         ],
-        output='screen'
+        output='screen',
+        condition=IfCondition(use_gazebo_arg),
     )
+    #########################################################################################
+    #########################################################################################
+
+
+
+
+    ##################################### HARDWARE MODE #####################################
+    #########################################################################################
+
+
     #########################################################################################
     #########################################################################################
 
@@ -134,14 +102,13 @@ def generate_launch_description():
         f"{robot_name}.urdf.xacro"
     ])
 
-    # Generate robot_description using proper substitution handling
     robot_description_content = Command([
             "xacro ", xacro_file,
             " use_gazebo:=", use_gazebo_arg,
         ])
 
     params = [{
-            "use_sim_time": PythonExpression(["'", use_gazebo_arg, "' == 'true'"]),
+            "use_sim_time": use_gazebo_arg,
             "robot_description": robot_description_content,
         }]
 
@@ -158,6 +125,20 @@ def generate_launch_description():
         output='screen',
         parameters=[os.path.join(pkg_project_description, 'config', f'{robot_name}.yaml')],
     )
+
+    ##################  VISUALIZE IN RVIZ ##################
+    node_rviz = Node(
+       package='rviz2',
+       executable='rviz2',
+       arguments=['-d', os.path.join(pkg_project_bringup, 'config', 'tow_tractor.rviz')],
+       condition=IfCondition(LaunchConfiguration('rviz')),
+    )
+
+    declare_rviz = DeclareLaunchArgument(
+        'rviz', default_value='true',
+        description='Open RViz.',
+    )
+
     #########################################################################################
     #########################################################################################
 
@@ -166,6 +147,7 @@ def generate_launch_description():
 
     ############################ REAR STEERING CONTROLLER LAUNCH ############################
     #########################################################################################
+    # Note it's not used right now
     node_rear_steering_controller = Node(
         package='tow_tractor_control',
         executable='rear_wheel_steering_controller',
@@ -175,7 +157,7 @@ def generate_launch_description():
             'steer_cmd_topic': f'/{robot_name}/cmd_motor_pos',
             'model_info_topic': f'/{robot_name}/info',
         }],
-        condition=IfCondition(PythonExpression(["'", robot_control, "' == 'rear_steer'"]))
+        condition=IfCondition(PythonExpression(["'", robot_control, "' == 'rear_steer'"])),
     )
     #########################################################################################
     #########################################################################################
@@ -183,7 +165,7 @@ def generate_launch_description():
 
 
 
-    ########################### SLAM TOOLBOX - ONLINE ASYNC LAUNCH ##########################
+    #################################### SLAM && NAVIGATION #################################
     #########################################################################################
     slam_toolbox_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
@@ -199,28 +181,25 @@ def generate_launch_description():
                 'config',
                 'mapper_params_online_async.yaml'
             ]),
-            'use_sim_time': use_gazebo,
+            'use_sim_time': use_gazebo_arg,
         }.items()
     )
     #########################################################################################
     #########################################################################################
 
-    actions = [
+    return LaunchDescription([
+
         ################ PACKAGE SETUP ACTIONS ################
         set_gz_sim_resource_path,
         declare_rviz,
         declare_use_gazebo_arg,
-        declare_robot_name_arg,
-        declare_robot_control_arg,
-
-        OpaqueFunction(function=_setup),
 
         ############# GAZEBO NODES AND LAUNCH FILES #############
         launch_gazebo_world,
         node_ros_gz_bridge,
         node_spawn_urdf,
 
-        ############# ROBOT NODES AND LAUNCH FILES #############
+        ############# R0BOT NODES AND LAUNCH FILES #############
         node_rviz,
         node_robot_state_publisher,
         node_model_info_publisher,
@@ -228,9 +207,4 @@ def generate_launch_description():
 
         ############# Autonomous System NODES AND LAUNCH FILES #############
         slam_toolbox_launch,
-    ]
-
-    # Filter out any None values
-    actions = [action for action in actions if action is not None]
-
-    return LaunchDescription(actions)
+    ])
