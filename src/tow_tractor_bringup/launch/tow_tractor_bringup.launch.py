@@ -15,14 +15,22 @@ def generate_launch_description():
     robot_control = "diff_drive"        # ['rear_steer', 'diff_drive']
     use_gazebo = 'true'
 
-    port_arduino_1 = "/dev/ttyACM0"
-    port_arduino_2 = "/dev/ttyACM0"
+    # /dev/serial/by-id/usb-Arduino__www.arduino.cc__0042_34330313231351809001-if00
+    # /dev/serial/by-id/usb-Arduino__www.arduino.cc__0042_34330313231351B051E2-if00
+    # /dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_854353331313517061C2-if00 -> uno
+    port_arduino_1 = "/dev/serial/by-id/usb-Arduino__www.arduino.cc__0043_854353331313517061C2-if00"
+    port_arduino_2 = "/dev/ttyACM1"
     baudrate = 115200
 
     pkg_project_bringup = os.path.join(get_package_share_directory("tow_tractor_bringup"))
     pkg_project_description = os.path.join(get_package_share_directory("tow_tractor_description"))
     pkg_project_gazebo = os.path.join(get_package_share_directory("tow_tractor_gazebo"))
     pkg_project_hardware = os.path.join(get_package_share_directory("tow_tractor_hardware"))
+
+    print(f"▶ robot_name    = {robot_name}")
+    print(f"▶ robot_control = {robot_control}")
+    print(f"▶ port_arduino_1 = {port_arduino_1}, baudrate = {baudrate}")
+    print(f"▶ port_arduino_2 = {port_arduino_2}, baudrate = {baudrate}")
 
     ###################################### GAZEBO MODE ######################################
     #########################################################################################
@@ -93,13 +101,13 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'baudrate_imu': baudrate,
-            'channel_imu': port_arduino_2,
+            'channel_imu': port_arduino_1,
             'baudrate_encoders': baudrate,
             'channel_encoders': port_arduino_1,
             'baudrate_actuator_feedback': baudrate,
-            'channel_actuator_feedback': port_arduino_2,
-            'imu_msg_id': 0x20,
-            'encoders_msg_id': 0x30,
+            'channel_actuator_feedback': port_arduino_1,
+            'imu_msg_id': 0x30,
+            'encoders_msg_id': 0x20,
             'actuator_feedback_msg_id': 0x31,
             'timer_period': 0.002,
             'imu_topic': f'/{robot_name}/imu_raw',
@@ -119,13 +127,13 @@ def generate_launch_description():
             'baudrate_motors': baudrate,
             'channel_motors': port_arduino_1,
             'baudrate_actuator': baudrate,
-            'channel_actuator': port_arduino_2,
+            'channel_actuator': port_arduino_1,
             'motors_msg_id': 0x10,
             'actuator_msg_id': 0x11,
             'cmd_motor1_topic': f'/{robot_name}/cmd_motor1',
             'cmd_motor2_topic': f'/{robot_name}/cmd_motor2',
             'cmd_actuator_topic': f'/{robot_name}/cmd_actuator',
-            'timer_period': 0.01,
+            'timer_period': 0.04,
         }],
         condition=UnlessCondition(use_gazebo_arg),
     )
