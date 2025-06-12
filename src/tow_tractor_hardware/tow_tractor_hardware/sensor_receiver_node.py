@@ -62,9 +62,9 @@ class SensorReceiverNode(Node):
 
         # Publishers
         self.imu_pub = self.create_publisher(Imu, imu_topic, 10)
-        self.right_motor_pub = self.create_publisher(Float32, right_motor_feedback_topic, 10)  # Right motor topic
-        self.left_motor_pub = self.create_publisher(Float32, left_motor_feedback_topic, 10)  # Left motor topic
-        self.actuator_feedback_pub = self.create_publisher(Bool, actuator_feedback_topic, 10)  # Actuator feedback topic
+        self.right_motor_pub = self.create_publisher(Float32, right_motor_feedback_topic, 10)
+        self.left_motor_pub = self.create_publisher(Float32, left_motor_feedback_topic, 10)
+        self.actuator_feedback_pub = self.create_publisher(Bool, actuator_feedback_topic, 10)
 
         # Initialize Receivers Drivers
         self.imu = IMUSerialDriver(msgName="imu", channel=channel_imu, msgID=imu_msg_id, msgIDLength=1, baudrate=baudrate_imu)
@@ -80,6 +80,8 @@ class SensorReceiverNode(Node):
             imu_data = self.imu.receive()
             if imu_data:
                 imu_msg = Imu()
+                imu_msg.header.stamp = self.get_clock().now().to_msg()
+                imu_msg.header.frame_id = 'imu_link'
                 imu_msg.linear_acceleration.x = imu_data[0]
                 imu_msg.linear_acceleration.y = imu_data[1]
                 imu_msg.linear_acceleration.z = imu_data[2]
@@ -97,11 +99,11 @@ class SensorReceiverNode(Node):
                 right_motor_msg = Float32()
                 left_motor_msg = Float32()
 
-                right_motor_msg.data = encoders_data[0]  # Right motor RPM
-                left_motor_msg.data = encoders_data[1]  # Left motor RPM
+                right_motor_msg.data = encoders_data[0]
+                left_motor_msg.data = encoders_data[1]
 
-                self.right_motor_pub.publish(right_motor_msg)  # Publish to /feedback_right_motor
-                self.left_motor_pub.publish(left_motor_msg)  # Publish to /feedback_left_motor
+                self.right_motor_pub.publish(right_motor_msg)
+                self.left_motor_pub.publish(left_motor_msg)
         except Exception as e:
             self.get_logger().warn(f"Encoder read error: {e}")
 

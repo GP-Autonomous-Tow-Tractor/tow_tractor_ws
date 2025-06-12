@@ -23,6 +23,12 @@
     <xacro:property name="steering_max_speed" value="1.0"/>         <!--rad/s-->
     <xacro:property name="steering_max_torque" value="10.0"/>       <!-- N.m-->
 
+    <!-- SENSORS -->
+    <xacro:property name="lidar_rad" value="0.038"/>
+    <xacro:property name="lidar_width" value="0.0335"/>
+    <xacro:property name="lidar_material" value="black"/>
+    <xacro:property name="lidar_mass" value="0.042"/>
+
 
     <!-- BASE LINK -->
     <link name="base_link">
@@ -177,4 +183,45 @@
         <mu1 value="0.001"/>
         <mu2 value="0.001"/>
     </gazebo>
+
+    <!-- IMU LINK -->
+    <link name="imu_frame">
+    </link>
+
+    <joint name="imu_joint" type="fixed">
+        <parent link="chassis_link"/>
+        <child link="imu_frame"/>
+        <origin xyz="${chassis_width / 2} 0.0 ${chassis_hight / 2}" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+
+    <!-- LIDAR LINK -->
+    <link name="lidar_frame">
+        <visual>
+            <geometry>
+                <cylinder radius="${lidar_rad}" length="${lidar_width}"/>
+            </geometry>
+            <origin xyz="0.0 0.0 0" rpy="0.0 0.0 0.0"/>
+            <material name="${lidar_material}"/>
+        </visual>
+
+        <collision>
+            <geometry>
+                <cylinder radius="${lidar_rad}" length="${lidar_width}"/>
+            </geometry>
+            <origin xyz="0.0 0.0 ${chassis_hight + lidar_width / 2}" rpy="0.0 0.0 0.0"/>
+        </collision>
+
+        <xacro:inertial_cylinder mass="${lidar_mass}" radius="${lidar_rad}" length="${lidar_width}">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        </xacro:inertial_cylinder>
+    </link>
+
+    <joint name="lidar_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="lidar_frame"/>
+        <origin xyz="0.0 0.0 ${chassis_hight + lidar_width / 2}" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+
 </robot>

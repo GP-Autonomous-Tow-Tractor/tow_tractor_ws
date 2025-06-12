@@ -30,6 +30,7 @@ setup(
         'console_scripts': [
             'sensor_receiver_node = tow_tractor_hardware.sensor_receiver_node:main',
             'actuators_sender_node = tow_tractor_hardware.actuators_sender_node:main',
+            'odometry_publisher_node = tow_tractor_hardware.odometry_publisher_node:main',
         ],
     },
 )

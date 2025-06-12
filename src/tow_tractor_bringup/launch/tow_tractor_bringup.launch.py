@@ -137,6 +137,21 @@ def generate_launch_description():
         }],
         condition=UnlessCondition(use_gazebo_arg),
     )
+
+    node_odometry_publisher = Node(
+        package='tow_tractor_hardware',
+        executable='odometry_publisher_node',
+        name='odometry_publisher_node',
+        output='screen',
+        parameters=[{
+            'right_motor_feedback_topic': f'/{robot_name}/feedback_right_motor_raw',
+            'left_motor_feedback_topic': f'/{robot_name}/feedback_left_motor_raw',
+            'odom_unfiltered_topic': f'/odom_unfiltered',
+            'joint_states_topic': f'/joint_states',
+            'model_info_topic': f'/{robot_name}/info',
+        }],
+        condition=UnlessCondition(use_gazebo_arg),
+    )
     #########################################################################################
     #########################################################################################
 
@@ -249,7 +264,7 @@ def generate_launch_description():
             {'cmd_motor2_topic': f'/{robot_name}/cmd_motor2'}, # Left motor
         ],
         output='screen',
-        condition=IfCondition(PythonExpression(["'", robot_control, "' == 'diff_drive'"])),
+        condition=IfCondition(PythonExpression(["'", robot_control, "' == 'diff_drive'"])) and UnlessCondition(use_gazebo_arg),
         )
     #########################################################################################
     #########################################################################################
@@ -264,6 +279,11 @@ def generate_launch_description():
         declare_rviz,
         declare_use_gazebo_arg,
 
+        ############# R0BOT NODES AND LAUNCH FILES #############
+        node_robot_state_publisher,
+        node_model_info_publisher,
+        node_rviz,
+
         ############# GAZEBO NODES AND LAUNCH FILES #############
         launch_gazebo_world,
         node_ros_gz_bridge,
@@ -272,14 +292,11 @@ def generate_launch_description():
         ############# HARDWARE NODES AND LAUNCH FILES #############
         node_sensor_receiver,
         node_actuators_sender,
-
-        ############# R0BOT NODES AND LAUNCH FILES #############
-        node_robot_state_publisher,
-        node_model_info_publisher,
-        node_rviz,
+        node_odometry_publisher,
 
         ############# Autonomous System NODES AND LAUNCH FILES #############
         slam_toolbox_launch,
         node_rear_steering_controller,
         node_diff_driver_controller,
+    
     ])
