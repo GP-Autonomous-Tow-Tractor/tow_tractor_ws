@@ -3,7 +3,7 @@
 <package format="3">
   <name>tow_tractor_bringup</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description> Bring up files for the tow_tractor simulation and hardware.</description>
   <maintainer email="mah2002moud@gmail.com">mahmoud</maintainer>
   <license>TODO: License declaration</license>
 
@@ -24,6 +24,13 @@
   <exec_depend>rviz2</exec_depend>
   <exec_depend>xacro</exec_depend>
 
+  <exec_depend>tow_tractor</exec_depend>
+  <exec_depend>tow_tractor_gazebo</exec_depend>
+  <exec_depend>tow_tractor_hardware</exec_depend>
+  <exec_depend>tow_tractor_description</exec_depend>
+  <exec_depend>tow_tractor_control</exec_depend>
+  <exec_depend>tow_tractor_slam</exec_depend>
+  
   <export>
     <build_type>ament_python</build_type>
   </export>

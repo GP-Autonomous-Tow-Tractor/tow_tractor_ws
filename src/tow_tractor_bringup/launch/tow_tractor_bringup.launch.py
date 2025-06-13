@@ -26,6 +26,7 @@ def generate_launch_description():
     pkg_project_description = os.path.join(get_package_share_directory("tow_tractor_description"))
     pkg_project_gazebo = os.path.join(get_package_share_directory("tow_tractor_gazebo"))
     pkg_project_hardware = os.path.join(get_package_share_directory("tow_tractor_hardware"))
+    pkg_project_slam = os.path.join(get_package_share_directory("tow_tractor_slam"))
 
     print(f"▶ robot_name    = {robot_name}")
     print(f"▶ robot_control = {robot_control}")
@@ -110,7 +111,7 @@ def generate_launch_description():
             'encoders_msg_id': 0x20,
             'actuator_feedback_msg_id': 0x31,
             'timer_period': 0.002,
-            'imu_topic': f'/{robot_name}/imu_raw',
+            'imu_topic': f'/{robot_name}/imu',
             'right_motor_feedback_topic': f'/{robot_name}/feedback_right_motor_raw',
             'left_motor_feedback_topic': f'/{robot_name}/feedback_left_motor_raw',
             'actuator_feedback_topic': f'/{robot_name}/actuator_status',
@@ -215,6 +216,19 @@ def generate_launch_description():
 
     #################################### SLAM && NAVIGATION #################################
     #########################################################################################
+
+    # sensor fusion for localization
+    node_robot_localization = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_node',
+        output='screen',
+        parameters=[
+            PathJoinSubstitution([pkg_project_slam, 'config', 'ekf.yaml']),
+            {'use_sim_time': use_gazebo_arg},
+            ]
+    )
+
     slam_toolbox_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             PathJoinSubstitution([
@@ -225,9 +239,9 @@ def generate_launch_description():
         ]),
         launch_arguments={
             'params_file': PathJoinSubstitution([
-                pkg_project_bringup,
+                pkg_project_slam,
                 'config',
-                'mapper_params_online_async.yaml'
+                'slam.yaml'
             ]),
             'use_sim_time': use_gazebo_arg,
         }.items()
@@ -295,6 +309,7 @@ def generate_launch_description():
         node_odometry_publisher,
 
         ############# Autonomous System NODES AND LAUNCH FILES #############
+        node_robot_localization,
         slam_toolbox_launch,
         node_rear_steering_controller,
         node_diff_driver_controller,
