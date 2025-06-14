@@ -7,24 +7,54 @@ This repository contains a modular ROS2 workspace for simulating, describing, an
 ```
 .
 ├── src/
-│   ├── tow_tractor/                # Custom message definitions (e.g., ModelInfo.msg)
+│   ├── tow_tractor/                # Custom message definitions (ModelInfo.msg)
 │   ├── tow_tractor_bringup/        # Launch files and overall system bringup
 │   ├── tow_tractor_control/        # Controllers (diff drive, rear steer)
 │   ├── tow_tractor_description/    # Robot description, URDF, meshes, model info publisher
-│   └── tow_tractor_hardware/       # Hardware interface nodes (sensors, actuators)
-│   └── tow_tractor_gazebo/         # Gazebo simulation resources (worlds, models)
+│   ├── tow_tractor_hardware/       # Hardware interface nodes (sensors, actuators)
+│   ├── tow_tractor_gazebo/         # Gazebo simulation resources (worlds, models)
+│   └── tow_tractor_slam/          # SLAM and localization configurations
 └── README.md
 ```
 
 ## Main Features
 
-- **Robot Description**: URDF/Xacro files, meshes, and configuration in [`src/tow_tractor_description`](src/tow_tractor_description).
-- **Model Info Publisher**: Publishes robot parameters as a ROS2 topic ([`model_info_publisher_node.py`](src/tow_tractor_description/tow_tractor_description/model_info_publisher_node.py)).
-- **Controllers**: Diff drive and rear wheel steering controllers ([`diff_drive_controller_node.py`](src/tow_tractor_control/tow_tractor_control/diff_drive_controller_node.py)).
-- **Hardware Interface**: Nodes for sensor reading and actuator command ([`sensor_receiver_node`](src/tow_tractor_hardware/tow_tractor_hardware/sensor_receiver_node.py), [`actuators_sender_node`](src/tow_tractor_hardware/tow_tractor_hardware/actuators_sender_node.py)).
-- **Gazebo Integration**: Launches Gazebo simulation with robot and world ([`tow_tractor_bringup.launch.py`](src/tow_tractor_bringup/launch/tow_tractor_bringup.launch.py)).
-- **SLAM & Navigation**: Integrates with SLAM Toolbox and navigation stack.
-- **RViz Visualization**: Pre-configured RViz setups for visualization.
+### Message Definitions (`tow_tractor`)
+- Custom ROS2 messages including `ModelInfo.msg` for robot parameters
+
+### System Bringup (`tow_tractor_bringup`)
+- Main launch file for complete system startup
+- Integration of hardware and simulation modes
+- RViz configuration for visualization
+- Gazebo-ROS bridge configurations
+
+### Robot Control (`tow_tractor_control`)
+- Differential drive controller
+- Rear wheel steering controller
+- Command velocity processing
+
+### Robot Description (`tow_tractor_description`)
+- URDF/Xacro files for multiple robot variants
+- Model info publisher node
+- Mesh files and visual assets
+- Robot configuration parameters
+
+### Hardware Interface (`tow_tractor_hardware`)
+- Sensor receiver node for IMU and encoders
+- Actuator sender node for motors
+- Odometry publisher
+- Serial communication with Arduino
+
+### Gazebo Simulation (`tow_tractor_gazebo`)
+- Custom world definitions
+- Gazebo model resources
+- Simulation plugins configuration
+- Environment hooks for Gazebo paths
+
+### SLAM & Navigation (`tow_tractor_slam`)
+- Integration with SLAM Toolbox
+- EKF configuration for sensor fusion
+- Navigation stack setup
 
 ## How to Build
 
@@ -43,7 +73,14 @@ To bring up the full simulation (Gazebo + robot + control):
 ros2 launch tow_tractor_bringup tow_tractor_bringup.launch.py
 ```
 
-- To run in hardware mode, set `use_gazebo:=false`:
+Launch arguments:
+- `use_gazebo` (default: `true`): Toggle simulation mode
+- `rviz` (default: `true`): Toggle visualization
+- `robot_control` (options: `diff_drive`, `rear_steer`): Select control mode
+
+## Hardware Mode
+
+To run with real hardware:
 
 ```sh
 ros2 launch tow_tractor_bringup tow_tractor_bringup.launch.py use_gazebo:=false
@@ -75,9 +112,9 @@ colcon test
 
 ## License
 
-See individual package `LICENSE` or `package.xml` files.
+This project is licensed under the Apache License 2.0 - see the LICENSE files for details.
 
 ---
 
-**Maintainer:** Mahmoud  
+**Maintainer:** Mahmoud Mostafa  
 **Contact:** mah2002moud@gmail.com
