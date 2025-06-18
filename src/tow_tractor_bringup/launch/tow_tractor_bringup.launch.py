@@ -14,6 +14,7 @@ def generate_launch_description():
     robot_name = "tow_tractor_v2"
     robot_control = "diff_drive"        # ['rear_steer', 'diff_drive']
     use_gazebo = 'true'
+    use_lidar = 'false'
 
     # /dev/serial/by-id/usb-Arduino__www.arduino.cc__0042_34330313231351809001-if00
     # /dev/serial/by-id/usb-Arduino__www.arduino.cc__0042_34330313231351B051E2-if00
@@ -95,6 +96,27 @@ def generate_launch_description():
 
     ##################################### HARDWARE MODE #####################################
     #########################################################################################
+    declare_use_lidar_arg = DeclareLaunchArgument(
+        'lidar',
+        default_value=use_lidar,
+        description='Whether to include the LDLidar node'
+    )
+    use_lidar_arg = LaunchConfiguration("lidar")
+
+    ldlidar_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                get_package_share_directory('ldlidar_node'),
+                'launch',
+                'ldlidar_with_mgr.launch.py'
+            ])
+        ]),
+        condition=IfCondition(
+            PythonExpression([
+                "'", use_gazebo_arg, "'", " == 'false' and ", "'", use_lidar_arg, "'", " == 'true'"
+            ])
+        ),
+    )
     node_sensor_receiver = Node(
         package='tow_tractor_hardware',
         executable='sensor_receiver_node',
@@ -153,6 +175,7 @@ def generate_launch_description():
         }],
         condition=UnlessCondition(use_gazebo_arg),
     )
+
     #########################################################################################
     #########################################################################################
 
@@ -286,12 +309,21 @@ def generate_launch_description():
 
 
 
+    ############# LDLidar node launch (only if not using gazebo and use_lidar is true) #############
+
+    #########################################################################################
+    #########################################################################################
+
+
+
+
     return LaunchDescription([
 
         ################ PACKAGE SETUP ACTIONS ################
         set_gz_sim_resource_path,
         declare_rviz,
         declare_use_gazebo_arg,
+        declare_use_lidar_arg,
 
         ############# R0BOT NODES AND LAUNCH FILES #############
         node_robot_state_publisher,
@@ -304,6 +336,7 @@ def generate_launch_description():
         node_spawn_urdf,
 
         ############# HARDWARE NODES AND LAUNCH FILES #############
+        ldlidar_launch,
         node_sensor_receiver,
         node_actuators_sender,
         node_odometry_publisher,
@@ -313,5 +346,4 @@ def generate_launch_description():
         slam_toolbox_launch,
         node_rear_steering_controller,
         node_diff_driver_controller,
-    
     ])
