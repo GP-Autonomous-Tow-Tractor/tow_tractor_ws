@@ -208,7 +208,7 @@ private:
   // <---- Publishers
 
   // ----> Topics
-  std::string _topicRoot = "~/"; ///< Topic root.
+  std::string _topicRoot = ""; ///< Topic root.
   std::string _scanTopic = "scan"; ///< Scan topic.
   // <---- Topics
 
