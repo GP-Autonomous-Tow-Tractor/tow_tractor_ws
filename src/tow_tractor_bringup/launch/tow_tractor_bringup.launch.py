@@ -39,7 +39,8 @@ def generate_launch_description():
 
     ############# GZ-ROS-LAUNCH INITIAL SETUP #############
 
-    gz_sim_resource_path = f"{pkg_project_bringup}:{pkg_project_gazebo}:{pkg_project_description}"
+    gz_sim_resource_path = f"{pkg_project_bringup}/..:{pkg_project_gazebo}/..:{pkg_project_description}/.."
+    print(gz_sim_resource_path)
     set_gz_sim_resource_path = SetEnvironmentVariable('GZ_SIM_RESOURCE_PATH',gz_sim_resource_path)
 
     declare_use_gazebo_arg = DeclareLaunchArgument(
