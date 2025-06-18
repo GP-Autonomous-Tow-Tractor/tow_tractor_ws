@@ -196,13 +196,15 @@
 
 
     <!-- LIDAR LINK -->
-    <link name="lidar_frame">
+    <link name="lidar_base">
         <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <cylinder radius="${lidar_rad}" length="${lidar_width}"/>
+                <mesh filename="package://tow_tractor_description/meshes/LD19.stl" scale="0.001 0.001 0.001" />
             </geometry>
-            <origin xyz="0.0 0.0 0" rpy="0.0 0.0 0.0"/>
-            <material name="${lidar_material}"/>
+            <material name="ldlidar_mat">
+                <color rgba="0.8 0.8 0.8 0.8"/>
+            </material>
         </visual>
 
         <collision>
@@ -219,9 +221,17 @@
 
     <joint name="lidar_joint" type="fixed">
         <parent link="base_link"/>
-        <child link="lidar_frame"/>
+        <child link="lidar_base"/>
         <origin xyz="0.0 0.0 ${chassis_hight + lidar_width / 2}" rpy="0.0 0.0 0.0"/>
     </joint>
 
+
+    <joint name="ldlidar_link_joint" type="fixed">
+        <parent link="lidar_base"/>
+        <child link="lidar_frame"/>
+        <origin xyz="0 0 0.02745" rpy="0 0 0" />
+    </joint>
+
+    <link name="lidar_frame" />
 
 </robot>

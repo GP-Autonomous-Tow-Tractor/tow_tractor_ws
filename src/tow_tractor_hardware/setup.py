@@ -10,7 +10,6 @@ setup(
     packages=[
         package_name,
         'hardware',
-        'hardware.tests',
     ],
     data_files=[
         ('share/ament_index/resource_index/packages',
