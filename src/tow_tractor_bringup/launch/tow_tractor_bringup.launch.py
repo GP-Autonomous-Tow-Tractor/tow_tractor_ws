@@ -28,6 +28,7 @@ def generate_launch_description():
     pkg_project_gazebo = os.path.join(get_package_share_directory("tow_tractor_gazebo"))
     pkg_project_hardware = os.path.join(get_package_share_directory("tow_tractor_hardware"))
     pkg_project_slam = os.path.join(get_package_share_directory("tow_tractor_slam"))
+    pkg_project_cartographer = os.path.join(get_package_share_directory("tow_tractor_cartographer"))
 
     print(f"▶ robot_name    = {robot_name}")
     print(f"▶ robot_control = {robot_control}")
@@ -228,7 +229,7 @@ def generate_launch_description():
     )
 
     declare_rviz = DeclareLaunchArgument(
-        'rviz', default_value='true',
+        'rviz', default_value='false',
         description='Open RViz.',
     )
 
@@ -270,6 +271,20 @@ def generate_launch_description():
             'use_sim_time': use_gazebo_arg,
         }.items()
     )
+
+    cartographer_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                pkg_project_cartographer,
+                'launch',
+                'cartographer.launch.py'
+            ])
+        ]),
+        launch_arguments={
+            'use_sim_time': use_gazebo_arg,
+        }.items()
+    )
+
     #########################################################################################
     #########################################################################################
 
@@ -338,13 +353,14 @@ def generate_launch_description():
 
         ############# HARDWARE NODES AND LAUNCH FILES #############
         ldlidar_launch,
-        node_sensor_receiver,
-        node_actuators_sender,
-        node_odometry_publisher,
+        # node_sensor_receiver,
+        # node_actuators_sender,
+        # node_odometry_publisher,
 
         ############# Autonomous System NODES AND LAUNCH FILES #############
-        node_robot_localization,
-        slam_toolbox_launch,
+        # node_robot_localization,
+        # slam_toolbox_launch,
+        cartographer_launch,
         node_rear_steering_controller,
         node_diff_driver_controller,
     ])
