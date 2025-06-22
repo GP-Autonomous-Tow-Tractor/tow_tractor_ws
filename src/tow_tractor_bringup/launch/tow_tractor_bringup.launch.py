@@ -30,6 +30,7 @@ def generate_launch_description():
     pkg_project_hardware = os.path.join(get_package_share_directory("tow_tractor_hardware"))
     pkg_project_slam = os.path.join(get_package_share_directory("tow_tractor_slam"))
     pkg_project_cartographer = os.path.join(get_package_share_directory("tow_tractor_cartographer"))
+    pkg_project_navigation = os.path.join(get_package_share_directory("tow_tractor_navigation"))
 
     print(f"▶ robot_name    = {robot_name}")
     print(f"▶ robot_control = {robot_control}")
@@ -286,6 +287,19 @@ def generate_launch_description():
         }.items()
     )
 
+    nav2_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                pkg_project_navigation,
+                'launch',
+                'navigation.launch.py'
+            ])
+        ]),
+        launch_arguments={
+            'use_sim_time': use_gazebo_arg,
+        }.items()
+    )
+
     #########################################################################################
     #########################################################################################
 
@@ -362,6 +376,7 @@ def generate_launch_description():
         # node_robot_localization,
         # slam_toolbox_launch,
         cartographer_launch,
+        nav2_launch,
         node_rear_steering_controller,
         node_diff_driver_controller,
     ])
