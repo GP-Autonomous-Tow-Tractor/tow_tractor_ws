@@ -13,8 +13,9 @@ def generate_launch_description():
 
     robot_name = "tow_tractor_v2"
     robot_control = "diff_drive"        # ['rear_steer', 'diff_drive']
-    use_gazebo = 'true'
-    use_lidar = 'false'
+    use_gazebo = 'false'
+    use_lidar = 'true'
+    rviz = 'false'
 
     # /dev/serial/by-id/usb-Arduino__www.arduino.cc__0042_34330313231351809001-if00
     # /dev/serial/by-id/usb-Arduino__www.arduino.cc__0042_34330313231351B051E2-if00
@@ -126,7 +127,7 @@ def generate_launch_description():
         output='screen',
         parameters=[{
             'baudrate_imu': baudrate,
-            'channel_imu': port_arduino_1,
+            'channel_imu': port_arduino_2,
             'baudrate_encoders': baudrate,
             'channel_encoders': port_arduino_1,
             'baudrate_actuator_feedback': baudrate,
@@ -229,7 +230,7 @@ def generate_launch_description():
     )
 
     declare_rviz = DeclareLaunchArgument(
-        'rviz', default_value='false',
+        'rviz', default_value=rviz,
         description='Open RViz.',
     )
 
@@ -353,9 +354,9 @@ def generate_launch_description():
 
         ############# HARDWARE NODES AND LAUNCH FILES #############
         ldlidar_launch,
-        # node_sensor_receiver,
-        # node_actuators_sender,
-        # node_odometry_publisher,
+        node_sensor_receiver,
+        node_actuators_sender,
+        node_odometry_publisher,
 
         ############# Autonomous System NODES AND LAUNCH FILES #############
         # node_robot_localization,
