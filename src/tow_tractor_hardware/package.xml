@@ -11,8 +11,6 @@
 
   <depend>rclpy</depend>
   <depend>can_msgs</depend>
-  <depend>pyserial</depend>
-  <depend>spidev</depend>
   <depend>nav_msgs</depend>
   <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
