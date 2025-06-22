@@ -101,9 +101,9 @@ class ActuatorSenderNode(Node):
             self.cmd_right_motor,
             self.cmd_left_motor,
         )
-        self.actuator_driver.send(
-            self.cmd_actuator,
-        )
+        # self.actuator_driver.send(
+        #     self.cmd_actuator,
+        # )
 
 def main(args=None):
     rclpy.init(args=args)
